@@ -1,0 +1,7 @@
+{
+  "recommendations": [
+    "golang.go",
+    "redhat.vscode-yaml",
+    "ms-vscode.makefile-tools"
+  ]
+}

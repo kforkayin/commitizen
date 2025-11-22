@@ -1,0 +1,53 @@
+assert_lefthook_installed: true
+colors: true
+
+output:
+  - success
+  - failure
+  - execution
+  - execution_out
+
+# commit-msg:
+#   parallel: false
+#   jobs:
+#     - name: conform
+#       run: TODO - use commitizen
+#       skip:
+#         - merge
+#         - rebase
+
+pre-commit:
+  parallel: false
+  jobs:
+    - name: lefthook install
+      group:
+        parallel: false
+        jobs:
+          - name: install
+            run: go tool lefthook install
+            glob: "lefthook.yml"
+    - name: validate repo
+      group:
+        parallel: true
+        jobs:
+          - name: tidy
+            run: go mod tidy
+            stage_fixed: true
+          - name: lint & format
+            run: golangci-lint run ./...
+            stage_fixed: true
+          - name: format markdown
+            glob: "*md"
+            run: go tool markdownfmt -w .
+            stage_fixed: true
+          - name: check release config
+            glob: ".goreleaser.yaml"
+            run: go tool goreleaser check
+
+post-checkout:
+  parallel: false
+  jobs:
+    - name: install
+      run: go tool lefthook install
+      files: if [ "{3}" = "1" ]; then git diff --name-only {1} {2}; fi
+      glob: "lefthook.yml"
