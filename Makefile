@@ -34,6 +34,10 @@ $(GOLANGCI_LINT_BIN):
 
 .ONESHELL:
 version:
+	@if [ "$$(git rev-parse --abbrev-ref HEAD)" != "main" ]; then \
+		echo "Release can only be created from the main branch"; \
+		exit 1; \
+	fi
 	@if ! command -v git-cliff &> /dev/null; then \
 		echo "git-cliff is not installed. Please install it from https://git-cliff.org/docs/installation/"; \
 		exit 1; \
@@ -47,4 +51,5 @@ version:
 	git add internal/version/version.go README.md CHANGELOG.md; \
 	git commit -m "chore(release): $$version"; \
 	git tag "$$version"; \
+	git push origin main;
 	git push origin $$version;

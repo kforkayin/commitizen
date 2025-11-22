@@ -11,7 +11,7 @@ body = """
 {% for group, commits in commits | group_by(attribute="group") %}
 ### {{ group }}
 {% for commit in commits %}\
-    - {% if commit.breaking %}[**breaking**] {% endif %}{{ commit.message }} by {% if commit.remote.username %}[@{{commit.remote.username}}](https://github.com/{{commit.remote.username}}) {% else %}{{ commit.author.name }}{% endif %}
+    - {% if commit.breaking %}[**breaking**] {% endif %}{{ commit.message }} by {% if commit.remote.username %}[@{{commit.remote.username}}](https://github.com/{{commit.remote.username}}) {% else %}{{ commit.author.name }}{% endif %} ([{{ commit.id | truncate(length=7, end="") }}](https://github.com/isokolovskii/commitizen/commit/{{ commit.id }}))
 {% endfor %}\n
 {% endfor %}\n
 """

@@ -106,16 +106,39 @@ snapshot:
   version_template: "{{ .Tag }}"
 
 changelog:
+  use: github
   sort: asc
+  abbrev: 7
+  format: '- {{ .Message }} by @{{ .AuthorUsername }} ({{ .AbbrevSHA }})'
   filters:
     exclude:
-      - "^docs:"
-      - "^test:"
+      - '^chore\(release\):'
+  groups:
+    - title: ':rocket: New features'
+      regexp: '^feat.*'
+      order: 0
+    - title: ':bug: Bug fixes'
+      regexp: '^fix.*'
+      order: 1
+    - title: ':screwdriver:chore'
+      regexp: '^chore.*'
+      order: 2
+    - title: ':zap: Performance'
+      regexp: '^perf.*'
+      order: 3
+    - title: ':pencil: Refactor'
+      regexp: '^refactor.*'
+      order: 4
+    - title: ':books: Documentation'
+      regexp: '^docs.*'
+      order: 5
+    - title: ':test_tube: Tests'
+      regexp: '^test.*'
+      order: 6
+    - title: ':building_construction: ci'
+      regexp: '^(ci|build).*'
+      order: 7
 
 release:
   prerelease: auto
   make_latest: true
-  header: |
-    ## Commitizen ({{ .Date }})
-
-    New release of Commitizen Go CLI
