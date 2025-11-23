@@ -18,14 +18,23 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
+      - name: Install gotestsum
+        run: go install gotest.tools/gotestsum@latest
       - name: Test
-        run: go test $(go list ./... | grep -v '/gen$') -coverprofile coverage.out
+        run: gotestsum --junitfile report.xml -- -coverprofile=coverage.out $(go list ./... | grep -v '/gen$')
       - name: Report coverage
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage.out
           flags: unit
           name: ${{ join(matrix.*, ' ') }}
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          files: report.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   build:
     runs-on: ubuntu-latest
